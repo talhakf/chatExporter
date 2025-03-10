@@ -407,20 +407,25 @@ export const markdownStyles = `
     .content .codeblock {
         background: #2b2d31;
         border-radius: 4px;
-        margin-top: 6px;
-        font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
+        margin: 6px 0;
     }
 
     .content .codeblock pre {
         margin: 0;
-        padding: 8px;
-        color: #dcddde;
+        padding: 0.5rem 1rem;
         font-size: 0.875rem;
         line-height: 1.125rem;
-        white-space: pre-wrap;
-        word-wrap: break-word;
+        color: #dcddde;
+        white-space: pre;
         overflow-x: auto;
-        font-family: inherit;
+    }
+
+    .content .codeblock code {
+        background: transparent;
+        padding: 0;
+        color: inherit;
+        font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
+        white-space: inherit;
     }
 
     .content .inline-code {
@@ -431,6 +436,22 @@ export const markdownStyles = `
         font-size: 0.875rem;
         font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
         white-space: pre-wrap;
+    }
+
+    /* Override Prism styles to match Discord */
+    .content .codeblock .prism {
+        text-shadow: none !important;
+        background: transparent !important;
+        color: inherit !important;
+        white-space: inherit !important;
+    }
+
+    .content .codeblock .prism .token.operator,
+    .content .codeblock .prism .token.entity,
+    .content .codeblock .prism .token.url,
+    .content .codeblock .prism .language-css .token.string,
+    .content .codeblock .prism .style .token.string {
+        background: transparent !important;
     }
 `;
 
@@ -452,6 +473,18 @@ export const messageContentStyles = `
         content: "•";
         margin-right: 8px;
         color: var(--text-normal);
+    }
+
+    .content .message-line {
+        min-height: 1.375rem;
+    }
+
+    .content .message-line.br {
+        height: 1.375rem;
+    }
+
+    .content .codeblock .message-line {
+        min-height: 0;
     }
 `;
 

@@ -10,6 +10,7 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
         <html>
         <head>
             <title>Discord Chat Export - ${channel.name}</title>
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
             <style>
                 ${styles.styles}
             </style>
@@ -28,6 +29,8 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                     }).join("")}
                 </div>
             </div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
         </body>
         </html>
     `;
