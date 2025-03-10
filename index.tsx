@@ -88,10 +88,5 @@ export default definePlugin({
                 { label: "Last Month", value: "month" }
             ]
         },
-        loadFullHistory: {
-            type: OptionType.BOOLEAN,
-            description: "Load full message history (may take a long time for large channels)",
-            default: false
-        }
     }
 }); 

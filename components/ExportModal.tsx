@@ -13,7 +13,6 @@ export function ExportModal({ modalProps, channelId }: ExportModalProps) {
     const [format, setFormat] = useState(Settings.plugins.ChatExporter.defaultFormat);
     const [includeImages, setIncludeImages] = useState(Settings.plugins.ChatExporter.includeImages);
     const [dateRange, setDateRange] = useState(Settings.plugins.ChatExporter.defaultDateRange);
-    const [loadFullHistory, setLoadFullHistory] = useState(Settings.plugins.ChatExporter.loadFullHistory);
 
     return (
         <ModalRoot {...modalProps} size={ModalSize.MEDIUM}>
@@ -57,7 +56,7 @@ export function ExportModal({ modalProps, channelId }: ExportModalProps) {
                     />
                 </Forms.FormSection>
 
-                <Forms.FormSection className={Margins.bottom8}>
+                <Forms.FormSection>
                     <Switch
                         value={includeImages}
                         onChange={v => setIncludeImages(v)}
@@ -67,17 +66,6 @@ export function ExportModal({ modalProps, channelId }: ExportModalProps) {
                         Include Images
                     </Switch>
                 </Forms.FormSection>
-
-                <Forms.FormSection>
-                    <Switch
-                        value={loadFullHistory}
-                        onChange={v => setLoadFullHistory(v)}
-                        note="May take a long time for large channels"
-                        hideBorder
-                    >
-                        Load Full History
-                    </Switch>
-                </Forms.FormSection>
             </ModalContent>
             <ModalFooter>
                 <Button
@@ -85,8 +73,7 @@ export function ExportModal({ modalProps, channelId }: ExportModalProps) {
                         exportChat(channelId, {
                             format,
                             includeImages,
-                            dateRange,
-                            loadFullHistory
+                            dateRange
                         });
                         modalProps.onClose();
                     }}

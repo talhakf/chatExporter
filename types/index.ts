@@ -17,7 +17,6 @@ export interface ExportOptions {
     format: "txt" | "json" | "html";
     includeImages: boolean;
     dateRange: "all" | "day" | "week" | "month";
-    loadFullHistory: boolean;
 }
 
 export interface MessageFetchSuccess {
