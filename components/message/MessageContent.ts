@@ -1,4 +1,4 @@
-import { UserStore } from "@webpack/common";
+import { UserStore, MessageStore } from "@webpack/common";
 import { convertMessageContent, getAvatarUrl, formatTimestamp } from "../utils";
 import { renderAttachments, renderStickers } from "./Attachments";
 import { renderEmbeds } from "./Embed";
@@ -70,6 +70,10 @@ interface MessageContentProps {
 }
 
 export const renderMessage = ({ message, options }: MessageContentProps) => {
+    if (!UserStore || !MessageStore) {
+        throw new Error("Required stores are not initialized");
+    }
+
     const user = UserStore.getUser(message.author.id) || message.author;
     const avatarUrl = getAvatarUrl(user);
     const timeString = formatTimestamp(message.timestamp);
