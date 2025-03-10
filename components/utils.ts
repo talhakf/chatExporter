@@ -1,4 +1,4 @@
-export const convertMessageContent = (content: string, mentions: any[]) => {
+export const convertMessageContent = (content: string, mentions: any[], edited: boolean = false) => {
     if (!content) return '';
 
     // code blocks first to prevent formatting
@@ -60,6 +60,10 @@ export const convertMessageContent = (content: string, mentions: any[]) => {
             line.trim() ? `<div class="message-line">${line}</div>` : '<div class="message-line br"></div>'
         ).join('');
     }).join('');
+
+    if (edited) {
+        formatted += '<span class="edited">(edited)</span>';
+    }
 
     return formatted;
 };

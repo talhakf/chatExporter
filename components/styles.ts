@@ -486,6 +486,14 @@ export const messageContentStyles = `
     .content .codeblock .message-line {
         min-height: 0;
     }
+
+    .content .edited {
+        color: var(--text-muted);
+        font-size: 0.625rem;
+        margin-left: 3px;
+        display: inline-block;
+        vertical-align: baseline;
+    }
 `;
 
 export const styles = `

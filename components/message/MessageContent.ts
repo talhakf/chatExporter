@@ -78,6 +78,10 @@ export const renderMessage = ({ message, options }: MessageContentProps) => {
     const avatarUrl = getAvatarUrl(user);
     const timeString = formatTimestamp(message.timestamp);
 
+    const content = message.content ? convertMessageContent(message.content, message.mentions || [], !!message.edited_timestamp) : '';
+    const attachments = renderAttachments({ attachments: message.attachments || [], includeImages: options.includeImages });
+    const embeds = renderEmbeds(message.embeds || [], message.mentions);
+
     return `
         <div class="message">
             <img class="avatar" src="${avatarUrl}" alt="${user.username}" loading="lazy" />
@@ -87,11 +91,11 @@ export const renderMessage = ({ message, options }: MessageContentProps) => {
                     <span class="timestamp">${timeString}</span>
                 </div>
                 ${renderReply({ message })}
-                <div class="content">${convertMessageContent(message.content, message.mentions)}</div>
+                <div class="content">${content}</div>
                 ${renderStickers({ stickers: message.sticker_items || [] })}
                 ${renderReactions({ reactions: message.reactions || [] })}
-                ${renderAttachments({ attachments: message.attachments || [], includeImages: options.includeImages })}
-                ${renderEmbeds(message.embeds || [], message.mentions)}
+                ${attachments}
+                ${embeds}
             </div>
         </div>
     `;
