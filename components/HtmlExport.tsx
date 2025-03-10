@@ -23,6 +23,10 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                     --font-primary: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
                     --mention-background: rgba(88, 101, 242, 0.3);
                     --mention-foreground: #c9cdfb;
+                    --embed-background: #2B2D31;
+                    --embed-color-pill: #4f545c;
+                    --command-name: #00A8FC;
+                    --command-background: rgba(0, 168, 252, 0.1);
                 }
                 
                 body {
@@ -128,10 +132,75 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
 
                 .embed {
                     margin-top: 8px;
-                    padding: 8px 16px;
-                    background: var(--background-secondary);
-                    border-left: 4px solid var(--brand-experiment);
+                    padding: 8px 16px 16px 12px;
+                    background: var(--embed-background);
                     border-radius: 4px;
+                    position: relative;
+                }
+
+                .embed::before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    width: 4px;
+                    background: var(--embed-color-pill);
+                    border-radius: 4px 0 0 4px;
+                }
+
+                .embed-title {
+                    color: var(--header-primary);
+                    font-size: 1rem;
+                    font-weight: 600;
+                    margin-bottom: 8px;
+                }
+
+                .embed-title a {
+                    color: var(--text-link);
+                    text-decoration: none;
+                }
+
+                .embed-title a:hover {
+                    text-decoration: underline;
+                }
+
+                .embed-description {
+                    color: var(--text-normal);
+                    font-size: 0.9375rem;
+                    line-height: 1.3;
+                    white-space: pre-wrap;
+                    margin-bottom: 8px;
+                }
+
+                .embed-image {
+                    max-width: 100%;
+                    margin-top: 16px;
+                    border-radius: 4px;
+                }
+
+                .command-interaction {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 4px;
+                    font-size: 0.875rem;
+                }
+
+                .command-name {
+                    color: var(--command-name);
+                    background: var(--command-background);
+                    padding: 0 4px;
+                    border-radius: 3px;
+                    font-weight: 500;
+                }
+
+                .command-user {
+                    color: var(--text-muted);
+                    margin-left: 4px;
+                }
+
+                .command-user .mention {
+                    color: var(--text-normal);
                 }
 
                 .reply-container {
@@ -293,9 +362,53 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                         };
 
                         if (m.type !== 0 && m.type !== 19) {
+                            let systemContent = '';
+                            let embedsContent = '';
+                            
+                            // Handle command interactions
+                            if (m.type === 20 && m.interaction) {
+                                systemContent = `
+                                    <div class="command-interaction">
+                                        <span class="command-name">/${m.interaction.name}</span>
+                                        <span class="command-user">used by <span class="mention">@${m.interaction.user.global_name || m.interaction.user.username}</span></span>
+                                    </div>
+                                `;
+
+                                // Show embeds for command response
+                                if (m.embeds?.length) {
+                                    embedsContent = `
+                                        <div class="attachments">
+                                            ${m.embeds.map(embed => {
+                                                const colorStyle = embed.color ? `style="--embed-color-pill: #${embed.color.toString(16).padStart(6, '0')};"` : '';
+                                                return `
+                                                    <div class="embed" ${colorStyle}>
+                                                        ${embed.url && embed.title 
+                                                            ? `<div class="embed-title"><a href="${embed.url}" target="_blank">${embed.title}</a></div>`
+                                                            : embed.title 
+                                                                ? `<div class="embed-title">${embed.title}</div>`
+                                                                : ''
+                                                        }
+                                                        ${embed.description 
+                                                            ? `<div class="embed-description">${convertMessageContent(embed.description, m.mentions)}</div>`
+                                                            : ''
+                                                        }
+                                                        ${embed.image
+                                                            ? `<img class="embed-image" src="${embed.image.url}" alt="embed" loading="lazy" />`
+                                                            : ''
+                                                        }
+                                                    </div>
+                                                `;
+                                            }).join("")}
+                                        </div>
+                                    `;
+                                }
+                            }
+
                             return `
                                 <div class="system-message">
+                                    ${systemContent}
                                     ${convertMessageContent(m.content, m.mentions)}
+                                    ${embedsContent}
                                 </div>
                             `;
                         }
@@ -390,13 +503,27 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                         const embeds = m.embeds?.length
                             ? `
                                 <div class="attachments">
-                                    ${m.embeds.map(embed => `
-                                        <div class="embed">
-                                            ${embed.title ? `<strong>${embed.title}</strong><br>` : ''}
-                                            ${embed.description || ''}
-                                            ${embed.image ? `<img src="${embed.image.url}" alt="embed" loading="lazy" />` : ''}
-                                        </div>
-                                    `).join("")}
+                                    ${m.embeds.map(embed => {
+                                        const colorStyle = embed.color ? `style="--embed-color-pill: #${embed.color.toString(16).padStart(6, '0')};"` : '';
+                                        return `
+                                            <div class="embed" ${colorStyle}>
+                                                ${embed.url && embed.title 
+                                                    ? `<div class="embed-title"><a href="${embed.url}" target="_blank">${embed.title}</a></div>`
+                                                    : embed.title 
+                                                        ? `<div class="embed-title">${embed.title}</div>`
+                                                        : ''
+                                                }
+                                                ${embed.description 
+                                                    ? `<div class="embed-description">${convertMessageContent(embed.description, m.mentions)}</div>`
+                                                    : ''
+                                                }
+                                                ${embed.image
+                                                    ? `<img class="embed-image" src="${embed.image.url}" alt="embed" loading="lazy" />`
+                                                    : ''
+                                                }
+                                            </div>
+                                        `;
+                                    }).join("")}
                                 </div>
                             `
                             : "";
