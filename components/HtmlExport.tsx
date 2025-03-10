@@ -21,6 +21,8 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                     --channeltextarea-background: #383A40;
                     --brand-experiment: #5865F2;
                     --font-primary: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+                    --mention-background: rgba(88, 101, 242, 0.3);
+                    --mention-foreground: #c9cdfb;
                 }
                 
                 body {
@@ -240,6 +242,20 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                     vertical-align: bottom;
                     object-fit: contain;
                 }
+
+                .mention {
+                    background-color: var(--mention-background);
+                    color: var(--mention-foreground);
+                    border-radius: 3px;
+                    padding: 0 2px;
+                    font-weight: 500;
+                    cursor: default;
+                }
+
+                .mention:hover {
+                    background-color: var(--brand-experiment);
+                    color: white;
+                }
             </style>
         </head>
         <body>
@@ -257,17 +273,29 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                             : `https://cdn.discordapp.com/embed/avatars/${Number(user.discriminator || 0) % 5}.png`;
 
                         // emoji to img
-                        const convertCustomEmojis = (text: string) => {
-                            return text.replace(/<(a)?:(\w+):(\d+)>/g, (match, animated, name, id) => {
+                        const convertMessageContent = (text: string, mentions: any[] = []) => {
+                            // First handle custom emojis
+                            text = text.replace(/<(a)?:(\w+):(\d+)>/g, (match, animated, name, id) => {
                                 const extension = animated ? 'gif' : 'webp';
                                 return `<img class="custom-emoji" src="https://cdn.discordapp.com/emojis/${id}.${extension}?size=48" alt="${name}" title="${name}" />`;
                             });
+
+                            // Then handle user mentions
+                            text = text.replace(/<@!?(\d+)>/g, (match, id) => {
+                                const mentionedUser = mentions.find(user => user.id === id);
+                                if (mentionedUser) {
+                                    return `<span class="mention">@${mentionedUser.username}</span>`;
+                                }
+                                return `<span class="mention">@${id}</span>`;
+                            });
+
+                            return text;
                         };
 
                         if (m.type !== 0 && m.type !== 19) {
                             return `
                                 <div class="system-message">
-                                    ${convertCustomEmojis(m.content)}
+                                    ${convertMessageContent(m.content, m.mentions)}
                                 </div>
                             `;
                         }
@@ -382,7 +410,7 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                                         <span class="timestamp">${timeString}</span>
                                     </div>
                                     ${replyHtml}
-                                    <div class="content">${convertCustomEmojis(m.content)}</div>
+                                    <div class="content">${convertMessageContent(m.content, m.mentions)}</div>
                                     ${stickersHtml}
                                     ${reactionsHtml}
                                     ${attachments}
