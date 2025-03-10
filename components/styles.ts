@@ -147,10 +147,49 @@ export const embedStyles = `
         margin-bottom: 8px;
     }
 
-    .embed-image {
+    .embed-media {
+        position: relative;
         max-width: 100%;
         margin-top: 16px;
         border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .embed-image, .embed-gif, .embed-thumbnail {
+        max-width: 100%;
+        max-height: 350px;
+        border-radius: 4px;
+        object-fit: contain;
+    }
+
+    .embed-gif {
+        object-fit: cover;
+    }
+
+    .embed-video-link {
+        display: block;
+        position: relative;
+        text-decoration: none;
+    }
+
+    .embed-video-play {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 48px;
+        height: 48px;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: background-color 0.2s;
+    }
+
+    .embed-video-link:hover .embed-video-play {
+        background: rgba(0, 0, 0, 0.9);
     }
 `;
 
