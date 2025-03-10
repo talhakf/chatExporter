@@ -175,6 +175,64 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                     flex-shrink: 0;
                     color: var(--text-muted);
                 }
+
+                .reactions {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 4px;
+                    margin-top: 4px;
+                }
+
+                .reaction {
+                    display: flex;
+                    align-items: center;
+                    padding: 0.125rem 0.375rem;
+                    background: var(--background-tertiary);
+                    border-radius: 0.25rem;
+                    font-size: 0.875rem;
+                    gap: 4px;
+                }
+
+                .reaction-emoji {
+                    height: 1.3em;
+                    width: 1.3em;
+                    object-fit: contain;
+                }
+
+                .reaction-count {
+                    color: var(--text-muted);
+                    font-size: 0.875rem;
+                    min-width: 12px;
+                    text-align: center;
+                }
+
+                .sticker {
+                    width: 160px;
+                    height: 160px;
+                    margin-top: 8px;
+                    background: var(--background-secondary);
+                    border-radius: 4px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative;
+                }
+
+                .sticker img {
+                    max-width: 100%;
+                    max-height: 100%;
+                }
+
+                .sticker-name {
+                    position: absolute;
+                    bottom: 4px;
+                    left: 4px;
+                    background: rgba(0, 0, 0, 0.7);
+                    padding: 2px 6px;
+                    border-radius: 3px;
+                    font-size: 0.75rem;
+                    color: var(--text-normal);
+                }
             </style>
         </head>
         <body>
@@ -235,6 +293,34 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                             }
                         }
 
+                        // Generate reactions HTML
+                        const reactionsHtml = m.reactions?.length
+                            ? `
+                                <div class="reactions">
+                                    ${m.reactions.map(reaction => `
+                                        <div class="reaction">
+                                            <span class="reaction-emoji">${reaction.emoji.name}</span>
+                                            <span class="reaction-count">${reaction.count}</span>
+                                        </div>
+                                    `).join("")}
+                                </div>
+                            `
+                            : "";
+
+                        // Generate stickers HTML
+                        const stickersHtml = m.sticker_items?.length
+                            ? `
+                                <div class="stickers">
+                                    ${m.sticker_items.map(sticker => `
+                                        <div class="sticker">
+                                            <img src="https://media.discordapp.net/stickers/${sticker.id}.png" alt="${sticker.name}" />
+                                            <div class="sticker-name">${sticker.name}</div>
+                                        </div>
+                                    `).join("")}
+                                </div>
+                            `
+                            : "";
+
                         const attachments = options.includeImages && m.attachments
                             ? `
                                 <div class="attachments">
@@ -276,6 +362,8 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                                     </div>
                                     ${replyHtml}
                                     <div class="content">${m.content}</div>
+                                    ${stickersHtml}
+                                    ${reactionsHtml}
                                     ${attachments}
                                     ${embeds}
                                 </div>
