@@ -1,27 +1,52 @@
 import { ChannelStore, Menu } from "@webpack/common";
-import { Devs } from "@utils/constants";
 import { NavContextMenuPatchCallback } from "@api/ContextMenu";
 import definePlugin, { OptionType } from "@utils/types";
-import { Settings } from "@api/Settings";
-import React from "react";
-import { exportChat } from "./services/exportService";
+import { openModal } from "@utils/modal";
+import ErrorBoundary from "@components/ErrorBoundary";
+import { ExportModal } from "./components/ExportModal";
+import { FolderIcon } from "@components/Icons";
+import { findByPropsLazy } from "@webpack";
+
+const OptionClasses = findByPropsLazy("optionName", "optionIcon", "optionLabel");
+
+function DownloadIcon() {
+    return (
+        <svg
+            height="24"
+            width="24"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+        >
+            <path d="M12 2a1 1 0 0 1 1 1v10.59l3.3-3.3a1 1 0 1 1 1.4 1.42l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 1 1 1.4-1.42l3.3 3.3V3a1 1 0 0 1 1-1ZM3 20a1 1 0 1 0 0 2h18a1 1 0 1 0 0-2H3Z" />
+        </svg>
+    );
+}
+
+function openExportModal(channelId: string) {
+    openModal(props => (
+        <ErrorBoundary>
+            <ExportModal
+                modalProps={props}
+                channelId={channelId}
+            />
+        </ErrorBoundary>
+    ));
+}
 
 const patchAttachMenu: NavContextMenuPatchCallback = (children, props) => {
     const channel = ChannelStore.getChannel(props.channel.id);
     if (!channel) return;
 
-    children.push(
+    children.unshift(
         <Menu.MenuItem
             id="chat-exporter"
-            label="Export Chat"
-            action={() => {
-                exportChat(channel.id, {
-                    format: Settings.plugins.ChatExporter.defaultFormat,
-                    includeImages: Settings.plugins.ChatExporter.includeImages,
-                    dateRange: Settings.plugins.ChatExporter.defaultDateRange,
-                    loadFullHistory: Settings.plugins.ChatExporter.loadFullHistory
-                });
-            }}
+            label={
+                <div className={OptionClasses.optionLabel}>
+                    <DownloadIcon className={OptionClasses.optionIcon} />
+                    <div className={OptionClasses.optionName}>Export Chat</div>
+                </div>
+            }
+            action={() => openExportModal(channel.id)}
         />
     );
 };
