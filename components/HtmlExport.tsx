@@ -233,6 +233,13 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                     font-size: 0.75rem;
                     color: var(--text-normal);
                 }
+
+                .custom-emoji {
+                    width: 1.375em;
+                    height: 1.375em;
+                    vertical-align: bottom;
+                    object-fit: contain;
+                }
             </style>
         </head>
         <body>
@@ -249,10 +256,18 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                             ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp?size=80`
                             : `https://cdn.discordapp.com/embed/avatars/${Number(user.discriminator || 0) % 5}.png`;
 
+                        // emoji to img
+                        const convertCustomEmojis = (text: string) => {
+                            return text.replace(/<(a)?:(\w+):(\d+)>/g, (match, animated, name, id) => {
+                                const extension = animated ? 'gif' : 'webp';
+                                return `<img class="custom-emoji" src="https://cdn.discordapp.com/emojis/${id}.${extension}?size=48" alt="${name}" title="${name}" />`;
+                            });
+                        };
+
                         if (m.type !== 0 && m.type !== 19) {
                             return `
                                 <div class="system-message">
-                                    ${m.content}
+                                    ${convertCustomEmojis(m.content)}
                                 </div>
                             `;
                         }
@@ -293,16 +308,22 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                             }
                         }
 
-                        // Generate reactions HTML
+                        // emoji handler
                         const reactionsHtml = m.reactions?.length
                             ? `
                                 <div class="reactions">
-                                    ${m.reactions.map(reaction => `
-                                        <div class="reaction">
-                                            <span class="reaction-emoji">${reaction.emoji.name}</span>
-                                            <span class="reaction-count">${reaction.count}</span>
-                                        </div>
-                                    `).join("")}
+                                    ${m.reactions.map(reaction => {
+                                        let emojiHtml = reaction.emoji.id 
+                                            ? `<img class="reaction-emoji" src="https://cdn.discordapp.com/emojis/${reaction.emoji.id}.webp?size=48" alt="${reaction.emoji.name}" title="${reaction.emoji.name}" />`
+                                            : `<span class="reaction-emoji">${reaction.emoji.name}</span>`;
+                                        
+                                        return `
+                                            <div class="reaction">
+                                                ${emojiHtml}
+                                                <span class="reaction-count">${reaction.count}</span>
+                                            </div>
+                                        `;
+                                    }).join("")}
                                 </div>
                             `
                             : "";
@@ -361,7 +382,7 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
                                         <span class="timestamp">${timeString}</span>
                                     </div>
                                     ${replyHtml}
-                                    <div class="content">${m.content}</div>
+                                    <div class="content">${convertCustomEmojis(m.content)}</div>
                                     ${stickersHtml}
                                     ${reactionsHtml}
                                     ${attachments}

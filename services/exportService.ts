@@ -132,6 +132,9 @@ export const exportChat = async (channelId: string, options: ExportOptions) => {
                     consecutiveEmptyResponses = 0;
                     
                     const processedMessages = olderMessages.map(msg => {
+                        // Log each message object
+                        // console.log("Message Object:", JSON.stringify(msg, null, 2));
+                        
                         MessageStore.getMessages(channelId).receiveMessage(msg);
                         
                         if (msg.messageReference) {
@@ -225,7 +228,9 @@ export const exportChat = async (channelId: string, options: ExportOptions) => {
                             },
                             content: m.content,
                             timestamp: m.timestamp,
-                            attachments: options.includeImages ? m.attachments : []
+                            attachments: options.includeImages ? m.attachments : [],
+                            reactions: m.reactions || [],
+                            sticker_items: m.sticker_items || []
                         };
 
                         if (m.messageReference) {
