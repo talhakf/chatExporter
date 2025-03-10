@@ -370,4 +370,105 @@ export const customEmojiStyles = `
         vertical-align: bottom;
         object-fit: contain;
     }
-`; 
+`;
+
+export const markdownStyles = `
+    .content strong {
+        font-weight: 700;
+    }
+
+    .content em {
+        font-style: italic;
+    }
+
+    .content u {
+        text-decoration: underline;
+    }
+
+    .content s {
+        text-decoration: line-through;
+    }
+
+    .content .spoiler {
+        background-color: #202225;
+        border-radius: 3px;
+        padding: 0 2px;
+        cursor: pointer;
+        color: transparent;
+        user-select: none;
+    }
+
+    .content .spoiler.revealed,
+    .content .spoiler:hover {
+        color: var(--text-normal);
+        background-color: rgba(32, 34, 37, 0.9);
+    }
+
+    .content .codeblock {
+        background: #2b2d31;
+        border-radius: 4px;
+        margin-top: 6px;
+        font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
+    }
+
+    .content .codeblock pre {
+        margin: 0;
+        padding: 8px;
+        color: #dcddde;
+        font-size: 0.875rem;
+        line-height: 1.125rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow-x: auto;
+        font-family: inherit;
+    }
+
+    .content .inline-code {
+        background: #2b2d31;
+        padding: 3.2px 6px;
+        border-radius: 3px;
+        color: #dcddde;
+        font-size: 0.875rem;
+        font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
+        white-space: pre-wrap;
+    }
+`;
+
+export const messageContentStyles = `
+    .content .quote {
+        padding-left: 8px;
+        margin: 4px 0;
+        border-left: 4px solid var(--text-muted);
+        color: var(--text-muted);
+    }
+
+    .content .bullet {
+        display: flex;
+        align-items: baseline;
+        margin: 2px 0;
+    }
+
+    .content .bullet::before {
+        content: "•";
+        margin-right: 8px;
+        color: var(--text-normal);
+    }
+`;
+
+export const styles = `
+    :root {
+        ${cssVariables}
+    }
+    
+    ${baseStyles}
+    ${messageStyles}
+    ${embedStyles}
+    ${attachmentStyles}
+    ${systemMessageStyles}
+    ${reactionStyles}
+    ${mentionStyles}
+    ${replyStyles}
+    ${customEmojiStyles}
+    ${markdownStyles}
+    ${messageContentStyles}
+`;

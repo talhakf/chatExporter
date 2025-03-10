@@ -11,19 +11,7 @@ export const generateHtmlContent = (channel: any, filteredMessages: Message[], o
         <head>
             <title>Discord Chat Export - ${channel.name}</title>
             <style>
-                :root {
-                    ${styles.cssVariables}
-                }
-                
-                ${styles.baseStyles}
-                ${styles.messageStyles}
-                ${styles.embedStyles}
-                ${styles.attachmentStyles}
-                ${styles.systemMessageStyles}
-                ${styles.reactionStyles}
-                ${styles.mentionStyles}
-                ${styles.replyStyles}
-                ${styles.customEmojiStyles}
+                ${styles.styles}
             </style>
         </head>
         <body>

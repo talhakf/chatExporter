@@ -52,6 +52,10 @@ export const exportChat = async (channelId: string, options: ExportOptions) => {
 
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
+                if (!MessageStore) {
+                    throw new Error("MessageStore is not initialized");
+                }
+                
                 messages = MessageStore.getMessages(channelId);
                 if (messages?.toArray()?.length > 0) {
                     logger.info(`Successfully loaded ${messages.toArray().length} initial messages`);
