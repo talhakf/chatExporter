@@ -1,0 +1,15 @@
+.vc-export-btn {
+    -webkit-app-region: no-drag;
+}
+
+.vc-export-btn {
+    color: var(--interactive-normal);
+}
+
+.vc-export-btn:hover {
+    color: var(--interactive-hover);
+}
+
+.vc-export-btn:active {
+    color: var(--interactive-active);
+} 

@@ -83,4 +83,7 @@ export function ExportModal({ modalProps, channelId }: ExportModalProps) {
             </ModalFooter>
         </ModalRoot>
     );
+}
+
+export function openExportModal(channelId: string) {
 } 

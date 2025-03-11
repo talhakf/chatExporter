@@ -1,13 +1,18 @@
-import { ChannelStore, Menu } from "@webpack/common";
+import "./index.css";
+
+import { ChannelStore, Menu, React, SelectedChannelStore } from "@webpack/common";
 import { NavContextMenuPatchCallback } from "@api/ContextMenu";
 import definePlugin, { OptionType } from "@utils/types";
 import { openModal } from "@utils/modal";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { ExportModal } from "./components/ExportModal";
 import { FolderIcon } from "@components/Icons";
-import { findByPropsLazy } from "@webpack";
+import { findByPropsLazy, findComponentByCodeLazy } from "@webpack";
+import { ChatBarButton, ChatBarButtonFactory } from "@api/ChatButtons";
+import type { ReactNode } from "react";
 
 const OptionClasses = findByPropsLazy("optionName", "optionIcon", "optionLabel");
+const HeaderBarIcon = findComponentByCodeLazy(".HEADER_BAR_BADGE_TOP:", '.iconBadge,"top"');
 
 function DownloadIcon() {
     return (
@@ -33,6 +38,34 @@ function openExportModal(channelId: string) {
     ));
 }
 
+const ExportChatButton: ChatBarButtonFactory = ({ isMainChat, type }) => {
+    const channelId = SelectedChannelStore.getChannelId();
+    if (!isMainChat || !channelId) return null;
+
+    return (
+        <ChatBarButton
+            tooltip="Export Chat"
+            onClick={() => openExportModal(channelId)}
+        >
+            <DownloadIcon />
+        </ChatBarButton>
+    );
+};
+
+const ExportHeaderIcon = ErrorBoundary.wrap(() => {
+    const channelId = SelectedChannelStore.getChannelId();
+    if (!channelId) return null;
+
+    return (
+        <HeaderBarIcon
+            className="vc-export-btn"
+            onClick={() => openExportModal(channelId)}
+            tooltip="Export Chat"
+            icon={DownloadIcon}
+        />
+    );
+});
+
 const patchAttachMenu: NavContextMenuPatchCallback = (children, props) => {
     const channel = ChannelStore.getChannel(props.channel.id);
     if (!channel) return;
@@ -51,6 +84,17 @@ const patchAttachMenu: NavContextMenuPatchCallback = (children, props) => {
     );
 };
 
+function ToolbarFragmentWrapper({ children }: { children: ReactNode[]; }) {
+    children.splice(
+        children.length - 1, 0,
+        <ErrorBoundary noop={true}>
+            <ExportHeaderIcon />
+        </ErrorBoundary>
+    );
+
+    return <>{children}</>;
+}
+
 export default definePlugin({
     name: "ChatExporter",
     description: "Export Discord chat messages in various formats (TXT, JSON, HTML)",
@@ -60,6 +104,22 @@ export default definePlugin({
     contextMenus: {
         "channel-attach": patchAttachMenu
     },
+
+    patches: [
+        {
+            find: "toolbar:function",
+            replacement: {
+                match: /(?<=toolbar:function.{0,100}\()\i.Fragment,/,
+                replace: "$self.ToolbarFragmentWrapper,"
+            }
+        }
+    ],
+
+    ToolbarFragmentWrapper: ErrorBoundary.wrap(ToolbarFragmentWrapper, {
+        fallback: () => <p style={{ color: "red" }}>Failed to render :(</p>
+    }),
+    ExportHeaderIcon,
+    chatBarButtons: [ExportChatButton],
 
     options: {
         defaultFormat: {
