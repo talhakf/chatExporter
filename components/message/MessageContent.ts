@@ -39,6 +39,37 @@ const renderReply = ({ message }: ReplyProps) => {
     `;
 };
 
+interface ButtonProps {
+    components: any[];
+}
+
+const renderButtons = ({ components }: ButtonProps) => {
+    if (!components?.length) return '';
+
+    const buttons = components.flatMap(row => 
+        row.components.filter(comp => comp.type === 2)
+            .map(button => {
+                const style = button.style === 1 ? 'primary' :
+                             button.style === 2 ? 'secondary' :
+                             button.style === 3 ? 'success' :
+                             button.style === 4 ? 'danger' : 'link';
+                
+                const emoji = button.emoji ? 
+                    `<img class="button-emoji" src="https://cdn.discordapp.com/emojis/${button.emoji.id}.webp?size=20" alt="${button.emoji.name}" />` :
+                    '';
+
+                return `
+                    <button class="discord-button ${style}" ${button.disabled ? 'disabled' : ''}>
+                        ${emoji}
+                        <span class="button-label">${button.label || ''}</span>
+                    </button>
+                `;
+            })
+    ).join('');
+
+    return buttons ? `<div class="button-container">${buttons}</div>` : '';
+};
+
 interface ReactionsProps {
     reactions: any[];
 }
@@ -81,6 +112,7 @@ export const renderMessage = ({ message, options }: MessageContentProps) => {
     const content = message.content ? convertMessageContent(message.content, message.mentions || [], !!message.edited_timestamp) : '';
     const attachments = renderAttachments({ attachments: message.attachments || [], includeImages: options.includeImages });
     const embeds = renderEmbeds(message.embeds || [], message.mentions);
+    const buttons = renderButtons({ components: message.components || [] });
 
     return `
         <div class="message">
@@ -93,9 +125,10 @@ export const renderMessage = ({ message, options }: MessageContentProps) => {
                 ${renderReply({ message })}
                 <div class="content">${content}</div>
                 ${renderStickers({ stickers: message.sticker_items || [] })}
-                ${renderReactions({ reactions: message.reactions || [] })}
                 ${attachments}
                 ${embeds}
+                ${buttons}
+                ${renderReactions({ reactions: message.reactions || [] })}
             </div>
         </div>
     `;

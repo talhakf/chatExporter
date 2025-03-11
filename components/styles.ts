@@ -16,6 +16,16 @@ export const cssVariables = `
     --embed-color-pill: #4f545c;
     --command-name: #00A8FC;
     --command-background: rgba(0, 168, 252, 0.1);
+    --button-primary: #5865F2;
+    --button-primary-hover: #4752C4;
+    --button-secondary: #4F545C;
+    --button-secondary-hover: #686D73;
+    --button-success: #248046;
+    --button-success-hover: #1A6334;
+    --button-danger: #DA373C;
+    --button-danger-hover: #A12828;
+    --button-link: #00A8FC;
+    --button-link-hover: #0096E2;
 `;
 
 export const baseStyles = `
@@ -100,6 +110,83 @@ export const messageStyles = `
         font-size: 1rem;
         white-space: pre-wrap;
         word-wrap: break-word;
+    }
+
+    .button-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    .discord-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 16px;
+        min-height: 32px;
+        min-width: 60px;
+        border-radius: 3px;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 16px;
+        cursor: pointer;
+        border: none;
+        color: white;
+        transition: background-color 0.17s ease;
+    }
+
+    .discord-button.primary {
+        background-color: var(--button-primary);
+    }
+    .discord-button.primary:hover {
+        background-color: var(--button-primary-hover);
+    }
+
+    .discord-button.secondary {
+        background-color: var(--button-secondary);
+    }
+    .discord-button.secondary:hover {
+        background-color: var(--button-secondary-hover);
+    }
+
+    .discord-button.success {
+        background-color: var(--button-success);
+    }
+    .discord-button.success:hover {
+        background-color: var(--button-success-hover);
+    }
+
+    .discord-button.danger {
+        background-color: var(--button-danger);
+    }
+    .discord-button.danger:hover {
+        background-color: var(--button-danger-hover);
+    }
+
+    .discord-button.link {
+        color: var(--button-link);
+        background: transparent;
+        padding: 2px 8px;
+    }
+    .discord-button.link:hover {
+        color: var(--button-link-hover);
+        text-decoration: underline;
+    }
+
+    .discord-button[disabled] {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+    .button-emoji {
+        width: 20px;
+        height: 20px;
+        margin-right: 4px;
+        vertical-align: bottom;
+    }
+
+    .button-label {
+        margin: 0 4px;
     }
 `;
 
