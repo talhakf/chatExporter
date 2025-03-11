@@ -120,6 +120,7 @@ export const renderMessage = ({ message, options }: MessageContentProps) => {
             <div class="message-content">
                 <div class="message-header">
                     <span class="username">${user.username}</span>
+                    ${message.author.bot ? '<span class="bot-tag">APP</span>' : ''}
                     <span class="timestamp">${timeString}</span>
                 </div>
                 ${renderReply({ message })}

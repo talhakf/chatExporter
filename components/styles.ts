@@ -100,6 +100,20 @@ export const messageStyles = `
         margin-right: 8px;
     }
 
+    .bot-tag {
+        background: var(--brand-experiment);
+        color: white;
+        border-radius: 3px;
+        padding: 0 4px;
+        font-size: 0.625rem;
+        font-weight: 500;
+        line-height: 1.3;
+        text-transform: uppercase;
+        margin-right: 8px;
+        flex-shrink: 0;
+        height: fit-content;
+    }
+
     .timestamp {
         color: var(--text-muted);
         font-size: 0.75rem;
