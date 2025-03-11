@@ -6,8 +6,9 @@ import { downloadFile } from "../utils/fileUtils";
 import { generateHtmlContent } from "../components/HtmlExport";
 
 const logger = new Logger("ChatExporter");
-const RestAPI = findByPropsLazy("get", "post", "put", "patch", "delete");
 const TokenModule = findByPropsLazy("getToken");
+
+const logMessage = (msg: any) => console.log("Message Object:", JSON.stringify(msg, null, 2));
 
 const isMessageWithinDateRange = (timestamp: string, dateRange: string): boolean => {
     if (dateRange === "all") return true;
@@ -94,6 +95,22 @@ export const exportChat = async (channelId: string, options: ExportOptions) => {
                 return;
             }
 
+            // log initial messages
+            initialData.forEach(msg => {
+                logMessage(msg);
+                MessageStore.getMessages(channelId).receiveMessage(msg);
+                
+                if (msg.messageReference) {
+                    const reference = MessageStore.getMessage(
+                        msg.messageReference.channel_id,
+                        msg.messageReference.message_id
+                    );
+                    if (reference) {
+                        MessageStore.getMessages(channelId).receiveMessage(reference);
+                    }
+                }
+            });
+
             let allMessages = initialData;
             let lastMessageId = initialData[initialData.length - 1]?.id;
             let totalFetched = initialData.length;
@@ -136,8 +153,7 @@ export const exportChat = async (channelId: string, options: ExportOptions) => {
                     consecutiveEmptyResponses = 0;
                     
                     const processedMessages = olderMessages.map(msg => {
-                        // Log each message object
-                        // console.log("Message Object:", JSON.stringify(msg, null, 2));
+                        logMessage(msg);
                         
                         MessageStore.getMessages(channelId).receiveMessage(msg);
                         
